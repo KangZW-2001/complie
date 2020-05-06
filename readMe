@@ -1,0 +1,84 @@
+语法分析器说明：
+终结符号：
+TYPE  : int float char char double
+VOID  : void
+WHILE : while
+IF    : if
+break : break
+CONTINUE : continue
+FOR : for
+ELSE : else
+RETURN : return
+MAIN : main
+WHILE : while
+'<' '>' '==' '>=' '<=' '<>' : COMPAREOP
+'+' '-' '*' '/' : CALCULOP
+'++' '--' : AUTOCHANGEOP
+'=' : EQUALOP
+'(' : LB
+"[" : LBB
+"{" : LBBB
+")" : RB
+"]" : RBB
+"}" : RBBB
+";" : SEMI
+"," : COMMA
+变量名 : ID
+数字 : NUMBER
+
+产生式（以下非全大写字母串全部代表非终结符）：
+program --> program fun | fun
+    程序由函数组成，在这里我们只考虑程序的函数部分
+fun_name --> ID | MAIN
+    函数的名字由变量名或者main组成
+fun --> TYPE fun_name LB arguments_list RB LBBB code_block return_statement RBBB | VOID fun_name LB a        rguments_list RB LBBB code_block RBBB
+    函数的具体组成部分，其中arguments_list 代表形参列表，code_block代表代码段，return_statement代表返    回语句，这些在后面都会进行讲解。
+arguments_list --> arguments_list arguments_list | TYPE ID COMMA | TYPE ID
+    函数的形参列表，其中最后一个形式参数不带逗号，于是有TYPE ID这一项
+arguments_list_actual --> arguments_list_actual arguments_list_actual | id_num COMMA | id_num
+    函数的实际参数列表，其中id_num指的是ID或者NUMBER（后面会介绍到)
+id_num --> ID | NUMBER
+    指的是ID或者NUMBER
+return_statement --> RETURN id_num SEMI
+    函数的返回语句
+declar_statemen --> TYPE ID SEMI
+    变量的声明语句
+type_id --> TYPE ID | ID 
+    指的是 变量类型+变量名 或者 变量名
+number_result --> id_num | id_num id_num CALCULOP | number_result number_result CALCULOP
+    指的是最终结果是数字的表达式
+assign_statement --> type_id number_result EQUALOP SEMI | ID AUTOCHANGEOP SEMI
+    指的是赋值语句，包括未声明过的变量赋值，同时声明并且赋值以及++和--
+call_func --> ID LB arguments_list_actual RB SEMI
+    调用函数的语句
+logic_expression --> id_num id_num COMPAREOP
+    结果返回true或者false的逻辑表达式
+if_statement --> IF LB logic_expression RB LBBB code_block RBBB
+    if语句块
+else_if_statement --> ELSE IF LB logic_expression RB LBBB code_block RBBB
+    else if语句块
+else_statement --> ELSE LBBB code_block RBBB
+    else语句块
+while_statement --> WHIE WHILE LB logic_expression RB LBBB code_block RBBB
+    while语句块
+for_statement --> FOR LB assign_statement SEMI logic_expression SEMI assign_statement RB LBBB code_bl                  ock RBBB
+   for语句块
+code_block --> code_block code_block | declar_statement | assign_statement | call|fun | if_statement 		   | else_if_statement | else_statement | while_statement | for_statement
+   指的是代码块，包含上述各种语句
+
+该项目包含文件： 源文件   syntax_analysis.y syntax_analysis.l input
+                 使用bison得到 syntax_analysis.tab.c syntax_analysis.tab.h
+                 使用flex得到  lex.yy.c
+		 使用gcc得到 sytax_analysis
+使用方法： 在input输入想要分析的代码段，然后执行syntax_analysis（在ubantu系统下）,然后会先打印Compiling...，然后依次把归约用到的产生式打印在屏幕上，最后如果打印yyparse() completed successfully就说明归约成功，否则会打印出错误信息。
+
+
+
+
+
+
+
+
+
+
+

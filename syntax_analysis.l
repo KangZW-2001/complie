@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "t.tab.h"
+#include "syntax_analysis.tab.h"
 %}
 
 delim [ \t \n]
@@ -26,6 +26,7 @@ number {digit}+
 "while" {return(WHILE);}
 "<"|">"|"=="|">="|"<="|"<>" {return(COMPAREOP);}
 "+"|"-"|"*"|"/"|"*" {return(CALCULOP);}
+"++"|"--" {return(AUTOCHANGEOP);}
 "=" {return(EQUALOP);}
 "(" {return(LB);}
 "[" {return(LBB);}
